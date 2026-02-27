@@ -26,6 +26,10 @@ describe('Property 16: Data Export/Import Round-Trip', () => {
         fc.array(recipientArbitrary, { minLength: 1, maxLength: 10 }),
         fc.array(scheduledEventArbitrary, { minLength: 1, maxLength: 20 }),
         async (recipients, events) => {
+          // Clear storage before each iteration
+          clearMockStorage();
+          await StorageService.clearAllData();
+          
           // Save initial state
           for (const recipient of recipients) {
             await StorageService.saveRecipient(recipient);

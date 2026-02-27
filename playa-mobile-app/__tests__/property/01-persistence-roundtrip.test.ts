@@ -40,6 +40,10 @@ describe('Property 1: Recipient Persistence Round-Trip', () => {
   it('should preserve all recipients through bulk save/load cycle', async () => {
     await fc.assert(
       fc.asyncProperty(fc.array(recipientArbitrary, { minLength: 1, maxLength: 20 }), async (recipients) => {
+        // Clear storage before each iteration
+        clearMockStorage();
+        await StorageService.clearAllData();
+        
         // Save all recipients
         for (const recipient of recipients) {
           await StorageService.saveRecipient(recipient);
