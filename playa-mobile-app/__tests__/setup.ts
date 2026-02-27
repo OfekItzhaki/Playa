@@ -21,7 +21,17 @@ let mockStorage: Record<string, string> = {};
 
 // Export function to clear storage between tests
 export function clearMockStorage() {
-  mockStorage = {};
+  // Clear the object properties instead of reassigning
+  Object.keys(mockStorage).forEach(key => delete mockStorage[key]);
+  // Also clear StorageService cache
+  try {
+    const StorageService = require('../services/StorageService');
+    if (StorageService.clearCache) {
+      StorageService.clearCache();
+    }
+  } catch (_e) {
+    // Ignore if StorageService not available
+  }
 }
 
 jest.mock('react-native-mmkv', () => ({
@@ -31,7 +41,8 @@ jest.mock('react-native-mmkv', () => ({
     }),
     getString: jest.fn((key: string) => mockStorage[key]),
     clearAll: jest.fn(() => {
-      mockStorage = {};
+      // Clear the object properties instead of reassigning
+      Object.keys(mockStorage).forEach(key => delete mockStorage[key]);
     }),
   })),
 }));
