@@ -2,6 +2,9 @@ export function sanitizeInput(input: string, maxLength?: number): string {
   // Remove leading/trailing whitespace
   let sanitized = input.trim();
 
+  // Remove event handlers and dangerous attributes
+  sanitized = sanitized.replace(/on\w+\s*=/gi, '');
+
   // Escape HTML tags
   sanitized = sanitized
     .replace(/</g, '&lt;')
