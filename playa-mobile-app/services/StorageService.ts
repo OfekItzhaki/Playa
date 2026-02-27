@@ -228,14 +228,17 @@ export async function importData(jsonData: string): Promise<void> {
       throw new Error('Invalid data format');
     }
 
+    // Clear existing data first
+    await clearAllData();
+
     // Import data
     setJSON(KEYS.RECIPIENTS, data.recipients);
     setJSON(KEYS.EVENTS, data.events);
     setJSON(KEYS.METADATA, data.metadata);
 
-    // Clear cache to force reload
-    recipientsCache = null;
-    eventsCache = null;
+    // Update cache with imported data
+    recipientsCache = data.recipients;
+    eventsCache = data.events;
   } catch (_error) {
     throw new StorageError('Failed to import data. Please check the file format.', 'importData');
   }
@@ -249,6 +252,12 @@ export async function clearAllData(): Promise<void> {
   } catch (_error) {
     throw new StorageError('Failed to clear data. Please try again.', 'clearAllData');
   }
+}
+
+// Clear cache (useful for testing)
+export function clearCache(): void {
+  recipientsCache = null;
+  eventsCache = null;
 }
 
 // Generic metadata operations
