@@ -87,7 +87,7 @@ export const useRecipientStore = create<RecipientStore>((set, get) => ({
       // Regenerate events if schedule config changed
       if (scheduleConfigChanged) {
         await StorageService.deleteEventsByRecipient(id);
-        const today = new Date().toISOString().split('T')[0];
+        const today = new Date();
         const newEvents = await SchedulingService.generateEventsForRecipient(updated, today);
         await StorageService.saveEvents(newEvents);
       }
