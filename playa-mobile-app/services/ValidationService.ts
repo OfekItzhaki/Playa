@@ -82,7 +82,7 @@ export function validatePhoneNumber(phone: string): { success: boolean; error?: 
   if (result.success) {
     return { success: true };
   }
-  const errorMessage = result.error.errors.length > 0 ? result.error.errors[0].message : 'Invalid phone number';
+  const errorMessage = result.error.issues[0]?.message || 'Invalid phone number';
   return { success: false, error: errorMessage };
 }
 
@@ -91,7 +91,7 @@ export function validateInstagramUsername(username: string): { success: boolean;
   if (result.success) {
     return { success: true };
   }
-  const errorMessage = result.error.errors.length > 0 ? result.error.errors[0].message : 'Invalid username';
+  const errorMessage = result.error.issues[0]?.message || 'Invalid username';
   return { success: false, error: errorMessage };
 }
 
@@ -100,6 +100,6 @@ export function validateMessage(message: string): { success: boolean; error?: st
   if (result.success) {
     return { success: true };
   }
-  const errorMessage = result.error.errors.length > 0 ? result.error.errors[0].message : 'Invalid message';
+  const errorMessage = result.error.issues[0]?.message || 'Invalid message';
   return { success: false, error: errorMessage };
 }
