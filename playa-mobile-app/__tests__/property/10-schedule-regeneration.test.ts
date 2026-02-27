@@ -15,12 +15,10 @@ describe('Property 13: Schedule Config Change Regeneration', () => {
       fc.property(
         recipientArbitrary.filter((r) => r.messagePool.length > 0).map((r) => ({ ...r, isActive: true })),
         scheduleConfigArbitrary,
-        fc.date({ min: new Date('2024-01-01'), max: new Date('2024-12-31') }),
-        (recipient, newScheduleConfig, date) => {
-          // Generate initial events
-          const initialEvents = generateEventsForRecipient(recipient, date);
-          const initialCount = initialEvents.length;
-
+        fc.integer({ min: new Date('2024-01-01').getTime(), max: new Date('2024-12-31').getTime() }),
+        (recipient, newScheduleConfig, timestamp) => {
+          const date = new Date(timestamp);
+          
           // Update recipient with new schedule config
           const updatedRecipient = {
             ...recipient,
@@ -60,8 +58,10 @@ describe('Property 13: Schedule Config Change Regeneration', () => {
       fc.property(
         recipientArbitrary.filter((r) => r.messagePool.length > 0 && r.scheduleConfig.mode === 'random').map((r) => ({ ...r, isActive: true })),
         fc.integer({ min: 1, max: 10 }),
-        fc.date({ min: new Date('2024-01-01'), max: new Date('2024-12-31') }),
-        (recipient, newFrequency, date) => {
+        fc.integer({ min: new Date('2024-01-01').getTime(), max: new Date('2024-12-31').getTime() }),
+        (recipient, newFrequency, timestamp) => {
+          const date = new Date(timestamp);
+          
           // Skip if frequency is the same
           if (recipient.scheduleConfig.mode === 'random' && recipient.scheduleConfig.frequency === newFrequency) {
             return true;

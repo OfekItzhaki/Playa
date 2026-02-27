@@ -13,9 +13,12 @@ describe('Scheduling Algorithm Properties', () => {
     it('should generate events within 09:00-21:00 for random mode', () => {
       fc.assert(
         fc.property(
-          recipientArbitrary.filter((r) => r.scheduleConfig.mode === 'random' && r.messagePool.length > 0),
-          fc.date({ min: new Date('2024-01-01'), max: new Date('2024-12-31') }),
-          (recipient, date) => {
+          recipientArbitrary
+            .filter((r) => r.scheduleConfig.mode === 'random' && r.messagePool.length > 0)
+            .map((r) => ({ ...r, isActive: true })),
+          fc.integer({ min: new Date('2024-01-01').getTime(), max: new Date('2024-12-31').getTime() }),
+          (recipient, timestamp) => {
+            const date = new Date(timestamp);
             const events = generateEventsForRecipient(recipient, date);
 
             for (const event of events) {
@@ -44,9 +47,12 @@ describe('Scheduling Algorithm Properties', () => {
     it('should generate exactly one event per fixed time', () => {
       fc.assert(
         fc.property(
-          recipientArbitrary.filter((r) => r.scheduleConfig.mode === 'fixed' && r.messagePool.length > 0),
-          fc.date({ min: new Date('2024-01-01'), max: new Date('2024-12-31') }),
-          (recipient, date) => {
+          recipientArbitrary
+            .filter((r) => r.scheduleConfig.mode === 'fixed' && r.messagePool.length > 0)
+            .map((r) => ({ ...r, isActive: true })),
+          fc.integer({ min: new Date('2024-01-01').getTime(), max: new Date('2024-12-31').getTime() }),
+          (recipient, timestamp) => {
+            const date = new Date(timestamp);
             const events = generateEventsForRecipient(recipient, date);
 
             if (recipient.scheduleConfig.mode === 'fixed') {
@@ -75,9 +81,12 @@ describe('Scheduling Algorithm Properties', () => {
     it('should only use messages from recipient message pool', () => {
       fc.assert(
         fc.property(
-          recipientArbitrary.filter((r) => r.messagePool.length > 0),
-          fc.date({ min: new Date('2024-01-01'), max: new Date('2024-12-31') }),
-          (recipient, date) => {
+          recipientArbitrary
+            .filter((r) => r.messagePool.length > 0)
+            .map((r) => ({ ...r, isActive: true })),
+          fc.integer({ min: new Date('2024-01-01').getTime(), max: new Date('2024-12-31').getTime() }),
+          (recipient, timestamp) => {
+            const date = new Date(timestamp);
             const events = generateEventsForRecipient(recipient, date);
 
             for (const event of events) {
@@ -95,8 +104,9 @@ describe('Scheduling Algorithm Properties', () => {
       fc.assert(
         fc.property(
           recipientArbitrary.map((r) => ({ ...r, messagePool: [] })),
-          fc.date({ min: new Date('2024-01-01'), max: new Date('2024-12-31') }),
-          (recipient, date) => {
+          fc.integer({ min: new Date('2024-01-01').getTime(), max: new Date('2024-12-31').getTime() }),
+          (recipient, timestamp) => {
+            const date = new Date(timestamp);
             const events = generateEventsForRecipient(recipient, date);
             expect(events).toHaveLength(0);
           }
